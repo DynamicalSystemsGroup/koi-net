@@ -33,6 +33,7 @@ class KnowledgeObject(BaseModel):
     normalized_event_type: EventType | None = None
     source: KoiNetNode | None = None
     network_targets: set[KoiNetNode] = set()
+    prev_bundle: Bundle | None = None
     
     def __repr__(self):
         return f"<KObj '{self.rid}' event type: '{self.event_type}' -> '{self.normalized_event_type}', source: '{self.source}'>"

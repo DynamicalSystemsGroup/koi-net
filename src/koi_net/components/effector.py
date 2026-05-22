@@ -31,6 +31,7 @@ class Effector:
     
     def register_handler(self, handler: "DerefHandler"):
         self.deref_handlers.append(handler)
+        self.log.info(f"Registered deref handler {handler.__class__.__name__}")
     
     def _try_cache(self, rid: RID) -> tuple[Bundle, BundleSource] | None:
         bundle = self.cache.read(rid)

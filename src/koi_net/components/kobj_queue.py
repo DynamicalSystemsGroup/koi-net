@@ -59,5 +59,4 @@ class KobjQueue:
             if self.q.unfinished_tasks == 0:
                 return
         
-        print("WAIT FAILED")
         raise RuntimeError("Shutdown while awaiting queue")

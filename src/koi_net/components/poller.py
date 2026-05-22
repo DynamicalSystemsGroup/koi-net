@@ -36,7 +36,7 @@ class NodePoller(ThreadedComponent):
             wait_time = max(0, self.config.poller.polling_interval - elapsed)
             self.exit_event.wait(wait_time)
     
-    @depends_on("graph")
+    @depends_on("graph", "profile_monitor")
     def start(self):
         self.exit_event.clear()
         super().start()

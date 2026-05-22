@@ -175,8 +175,13 @@ class KnowledgePipeline:
         kobj = self.call_handler_chain(HandlerType.Bundle, kobj)
         if kobj is STOP_CHAIN: return
             
-        if kobj.normalized_event_type in (EventType.UPDATE, EventType.NEW):
+        if kobj.normalized_event_type == EventType.NEW:
             self.log.info(f"Writing to cache: {kobj!r}")
+            self.cache.write(kobj.bundle)
+            
+        elif kobj.normalized_event_type == EventType.UPDATE:
+            self.log.info(f"Writing to cache: {kobj!r}")
+            kobj.prev_bundle = self.cache.read(kobj.rid)
             self.cache.write(kobj.bundle)
             
         elif kobj.normalized_event_type == EventType.FORGET:
