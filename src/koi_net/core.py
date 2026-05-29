@@ -36,7 +36,8 @@ from .components import (
     NodeContactHandler,
     EdgeNegotiationHandler,
     SecureProfileHandler,
-    ConfigProvider
+    ConfigProvider,
+    HTTPDerefHandler
 )
 
 
@@ -73,6 +74,10 @@ class BaseNode(BaseAssembly):
     node_contact_handler: NodeContactHandler = NodeContactHandler
     edge_negotiation_handler: EdgeNegotiationHandler = EdgeNegotiationHandler
     secure_profile_handler: SecureProfileHandler = SecureProfileHandler
+    
+    # deref handlers
+    
+    http_deref_handler: HTTPDerefHandler = HTTPDerefHandler
     
     def __new__(cls, *args, root_dir: Path | None = None, **kwargs):
         if root_dir is None:
