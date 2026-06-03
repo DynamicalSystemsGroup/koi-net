@@ -19,3 +19,6 @@ class BaseNodeConfig(BaseModel):
     # evaluated during the library import and cause an error if any
     # env variables are undefined
     env: EnvConfig = Field(default_factory=EnvConfig)
+    
+    # typing passthrough for config provider component
+    def save_to_yaml(self) -> None: ...
