@@ -477,7 +477,7 @@ wheels = [
 
 [[package]]
 name = "koi-net"
-version = "2.1.0b3"
+version = "2.1.0b7"
 source = { virtual = "." }
 dependencies = [
     { name = "colorama" },

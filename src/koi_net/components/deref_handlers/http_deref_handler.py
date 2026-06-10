@@ -12,7 +12,10 @@ class HTTPDerefHandler(DerefHandler):
     rid_types=(HTTP, HTTPS)
     
     def handle(self, rid: RID):
-        resp = httpx.get(str(rid))
+        resp = httpx.get(
+            url=str(rid),
+            follow_redirects=True
+        )
         
         try:
             data = resp.json()
