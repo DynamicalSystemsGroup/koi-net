@@ -6,7 +6,6 @@ from rid_lib.types import KoiNetNode
 from koi_net.protocol.errors import ErrorType
 from koi_net.protocol.event import EventType
 
-from .handshaker import Handshaker
 from .kobj_queue import KobjQueue
 
 
@@ -15,7 +14,6 @@ class ErrorHandler:
     """Handles network and protocol errors that may occur during requests."""
     log: Logger
     kobj_queue: KobjQueue
-    handshaker: Handshaker
     
     timeout_counter: dict[KoiNetNode, int] = field(init=False, default_factory=dict)
     
@@ -51,10 +49,7 @@ class ErrorHandler:
         
         self.log.info(f"Handling protocol error {error_type} for node {node!r}")
         match error_type:
-            case ErrorType.UnknownNode:
-                self.log.info("Peer doesn't know me, attempting handshake...")
-                self.handshaker.handshake_with(node)
-                
+            case ErrorType.UnknownNode: ...
             case ErrorType.InvalidKey: ...
             case ErrorType.InvalidSignature: ...
             case ErrorType.InvalidTarget: ...

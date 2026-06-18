@@ -29,3 +29,5 @@ from .knowledge_handlers.forget_node_handler import ForgetNodeHandler
 from .knowledge_handlers.secure_profile_handler import SecureProfileHandler
 from .knowledge_handlers.basic_network_output_filter import BasicNetworkOutputFilter
 from .knowledge_handlers.node_contact_handler import NodeContactHandler
+
+from .deref_handlers.http_deref_handler import HTTPDerefHandler

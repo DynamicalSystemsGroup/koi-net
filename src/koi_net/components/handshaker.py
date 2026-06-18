@@ -9,7 +9,7 @@ from koi_net.config.base import BaseNodeConfig
 
 from .graph import NetworkGraph
 from .identity import NodeIdentity
-from .event_queue import EventQueue
+from .request_handler import RequestHandler
 
 
 @dataclass
@@ -19,9 +19,9 @@ class Handshaker:
     log: Logger
     cache: Cache
     identity: NodeIdentity
-    event_queue: EventQueue
     config: BaseNodeConfig
     graph: NetworkGraph
+    request_handler: RequestHandler
     
     @depends_on("graph", "profile_monitor", "server", "event_worker")
     def start(self):
@@ -51,15 +51,14 @@ class Handshaker:
         """
         
         self.log.debug(f"Initiating handshake with {target}")
-        self.event_queue.push(
-            Event.from_rid(
-                event_type=EventType.FORGET, 
-                rid=self.identity.rid),
-            target=target
-        )
-        self.event_queue.push(
-            event=Event.from_bundle(
-                event_type=EventType.NEW, 
-                bundle=self.cache.read(self.identity.rid)),
-            target=target
+        self.request_handler.broadcast_events(
+            node=target,
+            events=[
+                Event.from_rid(
+                    event_type=EventType.FORGET, 
+                    rid=self.identity.rid),
+                Event.from_bundle(
+                    event_type=EventType.NEW, 
+                    bundle=self.cache.read(self.identity.rid))
+            ]
         )

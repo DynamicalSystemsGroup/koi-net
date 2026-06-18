@@ -81,7 +81,7 @@ class SecureManager:
             raise
         
     def handle_unknown_node(self, envelope: SignedEnvelope) -> Bundle | None:
-        """Attempts to find node profile in proided envelope.
+        """Attempts to find node profile in provided envelope.
         
         If an unknown node sends an envelope, it may still be able to be
         validated if that envelope contains their node profile. This is
@@ -97,7 +97,7 @@ class SecureManager:
             if event.rid != envelope.source_node:
                 continue
             if event.event_type != EventType.NEW:
-                continue            
+                continue
             
             return event.bundle
         return None

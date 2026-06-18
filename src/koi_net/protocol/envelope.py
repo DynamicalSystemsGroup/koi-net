@@ -1,6 +1,6 @@
 import structlog
 from typing import Generic, TypeVar
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 from rid_lib.types import KoiNetNode
 
 from .secure import PrivateKey, PublicKey
@@ -17,8 +17,6 @@ class SignedEnvelope(BaseModel, Generic[T]):
     target_node: KoiNetNode
     signature: str
     
-    model_config = ConfigDict(exclude_none=True)
-    
     def verify_with(self, pub_key: PublicKey):
         """Verifies signed envelope with public key.
         
@@ -33,11 +31,14 @@ class SignedEnvelope(BaseModel, Generic[T]):
             target_node=self.target_node 
         )
         
-        log.debug(f"Verifying envelope: {unsigned_envelope.model_dump_json(exclude_none=True)}")
+        serialized_signed_envelope = unsigned_envelope.model_dump_json(
+            exclude_none=True)
+        
+        log.debug(f"Verifying envelope: {serialized_signed_envelope}")
 
         pub_key.verify(
-            self.signature,
-            unsigned_envelope.model_dump_json(exclude_none=True).encode()
+            signature=self.signature,
+            message=serialized_signed_envelope.encode()
         )
 
 class UnsignedEnvelope(BaseModel, Generic[T]):
@@ -45,16 +46,17 @@ class UnsignedEnvelope(BaseModel, Generic[T]):
     source_node: KoiNetNode
     target_node: KoiNetNode
     
-    model_config = ConfigDict(exclude_none=True)
-    
     def sign_with(self, priv_key: PrivateKey) -> SignedEnvelope[T]:
         """Signs with private key and returns `SignedEnvelope`."""
         
-        log.debug(f"Signing envelope: {self.model_dump_json(exclude_none=True)}")
+        serialized_unsigned_envelope = self.model_dump_json(
+            exclude_none=True)
+        
+        log.debug(f"Signing envelope: {serialized_unsigned_envelope}")
         log.debug(f"Type: [{type(self.payload)}]")
         
         signature = priv_key.sign(
-            self.model_dump_json(exclude_none=True).encode()
+            message=serialized_unsigned_envelope.encode()
         )
         
         return SignedEnvelope(

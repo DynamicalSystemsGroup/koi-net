@@ -24,7 +24,7 @@ class SyncManager:
     request_handler: RequestHandler
     kobj_queue: KobjQueue
     
-    @depends_on("graph", "kobj_worker")
+    @depends_on("graph", "kobj_worker", "handshaker")
     def start(self):
         """Catches up with providers on startup."""
         self.catch_up_with_all(self.config.koi_net.rid_types_of_interest)
