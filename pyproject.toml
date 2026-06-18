@@ -13,7 +13,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
 dependencies = [
-    "rid-lib==3.3.0b1",
+    "rid-lib>=3.3.0",
     "networkx>=3.4.2",
     "httpx>=0.28.1",
     "pydantic>=2.10.6",
