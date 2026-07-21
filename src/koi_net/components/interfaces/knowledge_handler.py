@@ -35,7 +35,12 @@ class HandlerType(StrEnum):
 
 @dataclass
 class KnowledgeHandler:
-    """Handles knowledge processing events of the provided types."""
+    """Base class for knowledge processing pipeline handler components.
+    
+    Derived classes MUST define the class variable `handler_type`, and
+    may optionally set `rid_types` and `event_types`, to limit when, and
+    which kind of knowledge objects will be passed to this handler.
+    """
     
     log: Logger
     pipeline: "KnowledgePipeline"
