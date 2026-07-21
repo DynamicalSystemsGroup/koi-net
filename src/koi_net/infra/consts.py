@@ -1,3 +1,5 @@
+"""Constants used by the dependency injection assembly system."""
+
 START_FUNC_NAME = "start"
 STOP_FUNC_NAME = "stop"
 

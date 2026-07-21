@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 
 class NodeState(StrEnum):
+    """Represents state throughout the node container lifecycle."""
+    
     IDLE = "IDLE"
     STARTING = "STARTING"
     RUNNING = "RUNNING"
@@ -23,6 +25,8 @@ class NodeState(StrEnum):
 
 @dataclass
 class NodeLifecycle:
+    """Manages the lifecycle of a node conatiner, and the components within it."""
+    
     log: Logger
     shutdown_signal: threading.Event
     exception_queue: Queue[Exception]
@@ -61,16 +65,25 @@ class NodeLifecycle:
             self.thread.join()
 
     def _run(self):
+        """The method run in the lifecycle's main thread.
+        
+        Handles component startup, shutdown, and any exceptions pushed
+        into the exception queue.
+        """
         with self.logging_context.bound_vars(thread=self.__class__.__name__):
             try:
                 self._startup()
                 self.startup_signal.set()
+                # awaits shutdown signal after startup
                 self.shutdown_signal.wait()
                 
             finally:
+                # attempts to call shutdown, even if unhandled exception
+                # thrown during startup
                 self._shutdown()
                 
                 while True:
+                    # prints all queued exceptions before exiting the thread
                     try:
                         exc = self.exception_queue.get_nowait()
                         traceback = Traceback.from_exception(
@@ -85,6 +98,8 @@ class NodeLifecycle:
                         break
         
     def _startup(self):
+        """Starts up all components, and queues any exceptions that occur."""
+        
         self.state = NodeState.STARTING
         self.log.info("Starting node...")
         for comp_name in self.artifact.start_order:
@@ -108,6 +123,8 @@ class NodeLifecycle:
         self.log.info("Startup complete!")
             
     def _shutdown(self):
+        """Shuts down all components, and queues any exceptions that occur."""
+        
         self.state = NodeState.STOPPING
         self.log.info("Stopping node...")
         for comp_name in self.artifact.stop_order:

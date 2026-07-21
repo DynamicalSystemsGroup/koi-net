@@ -1,3 +1,5 @@
+"""Logging system for all components, lifecycle, and assembly processes."""
+
 import os
 import sys
 import logging
@@ -25,6 +27,19 @@ shared_log_processors: list[Callable] = [
 
 
 class PartitionedFileHandler(logging.Handler):
+    """Writes logs to partitioned file supporting multiple nodes running 
+    simultaneously in the same execution environment.
+    
+    Intended to be used with `LoggingContext` component, which binds a 
+    node's `root_dir` to the `log_dir` context var. As a result, every 
+    node in an execution environment should send logs to the log file in 
+    their own root directory. Oftentimes logs produced by third party 
+    libraries fall through the cracks and are written to `dropped_logs.txt`
+    instead as a fallback.
+    
+    This system is overly complicated and is worth refactoring.
+    """
+    
     def __init__(
         self,
         log_file_name: str = "log.ndjson",
@@ -95,7 +110,11 @@ class PartitionedFileHandler(logging.Handler):
         
 
 class LogSystem:
-    """Configures and initializes the logging system."""
+    """Configures and initializes the logging system.
+    
+    Uses two log handlers by default. One prints to the console, the other
+    produces NDJSON log files, which can be viewed using LNAV.
+    """
     
     use_file_handler: bool
     use_console_handler: bool

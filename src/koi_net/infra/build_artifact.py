@@ -20,6 +20,10 @@ log = structlog.stdlib.get_logger()
 
 
 class BuildArtifact:
+    """Used by the `Assembler` to determine the initialization, start
+    and stop order of components using a graph solver.
+    """
+    
     assembler: "Assembler"
     
     comp_dict: dict[str, Any]
@@ -36,7 +40,7 @@ class BuildArtifact:
         self.assembler = assembler
         
     def collect_components(self):
-        """Collects components from class definition."""
+        """Collects components from the assembler's class variable definitions."""
         
         self.comp_dict = {}
         # adds components from class and all base classes. skips `type`, and runs in reverse so that sub classes override super class values
@@ -50,7 +54,8 @@ class BuildArtifact:
         log.debug(f"Collected {len(self.comp_dict)} components")
     
     def build_init_graph(self):
-        """Builds dependency graph and component type map.
+        """Builds initialization dependency graph and component type map.
+        Results stored in `init_graph` and `comp_types`.
         
         Graph representation is an adjacency list: the key is a component 
         name, and the value is a tuple containing names of the depedencies.
@@ -89,6 +94,8 @@ class BuildArtifact:
         log.debug("Built init dependency graph")
                 
     def build_start_graph(self):
+        """Builds start dependency graph, results stored in `start_graph`."""
+        
         self.start_graph = {}
         start_components = {
             name for name, comp in self.comp_dict.items()
@@ -104,6 +111,7 @@ class BuildArtifact:
             start_func = getattr(comp, START_FUNC_NAME)
             start_dependencies = getattr(start_func, DEPENDS_ON_FIELD, set())
             invalid_start_deps = start_dependencies - start_components
+            # ignores dependencies without a start method
             if invalid_start_deps:
                 log.warning(f"Ignoring undefined start dependencies {invalid_start_deps} on component '{comp_name}'")
                 start_dependencies -= invalid_start_deps
@@ -113,6 +121,8 @@ class BuildArtifact:
         log.debug("Built start dependency graph")
         
     def build_stop_graph(self):
+        """Builds stop dependency graph, results stored in `start_graph`."""
+        
         self.stop_graph = {}
         
         stop_components = {
@@ -143,6 +153,7 @@ class BuildArtifact:
             )
             
             invalid_stop_deps = stop_dependencies - stop_components
+            # ignores dependencies without a stop method
             if invalid_stop_deps:
                 log.warning(f"Ignoring undefined stop dependencies {invalid_stop_deps} on component '{comp_name}'")
                 stop_dependencies -= invalid_stop_deps
@@ -163,7 +174,7 @@ class BuildArtifact:
     
     @staticmethod
     def topo_sort(adj: dict[str, set[str]]):
-        """Topological sort of direct graph using Kahn's algorithm."""
+        """Topological sort of directed graph using Kahn's algorithm."""
         
         # reverse adj list: n -> incoming neighbors
         r_adj = BuildArtifact.reverse_adj_list(adj)
@@ -216,7 +227,7 @@ class BuildArtifact:
 
     @staticmethod
     def visualize(adj: dict[str, list[str]]) -> str:
-        """Creates representation of dependency graph in Graphviz DOT language."""
+        """Returns representation of dependency graph in Graphviz DOT language."""
         
         s = "digraph G {\n"
         for node, neighbors in adj.items():
@@ -233,6 +244,8 @@ class BuildArtifact:
         return s
     
     def build(self):
+        """Builds artifact, populates orderings."""
+        
         log.debug("Creating build artifact...")
         self.collect_components()
         

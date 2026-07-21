@@ -10,13 +10,20 @@ log = structlog.stdlib.get_logger()
 
 
 class Assembler:
+    """Assembles components into a container. The "blueprint" of the
+    dependency injection system, derived classes define components
+    as class variables.
+    
+    Initializing this class will return a `NodeContainer`, which can be
+    overriden by setting the `_container` class variable.
+    """
+    
     _container: type[NodeContainer] = NodeContainer
     
-    # optional order overrides:
-    _start_order: list[str]
-    _stop_order: list[str]
-    
     # annotation hack to show the components and container methods
+    # component types will derive from the assembly (appearing to be a 
+    # class instead of an instance), and the node container will expose
+    # lifecycle methods.
     def __new__(cls, *args, **kwargs) -> Self | NodeContainer:
         """Returns assembled node container."""
         
@@ -28,6 +35,8 @@ class Assembler:
         components = cls._build_components(artifact)
         
         log.debug("Returning assembled node")
+        # returns container populated with components, build artifact,
+        # and any kwargs passed into this constructor
         return cls._container(
             artifact=artifact,
             components=components,
@@ -36,7 +45,9 @@ class Assembler:
     
     @staticmethod
     def _build_components(artifact: BuildArtifact):
-        """Returns assembled components as a dict."""
+        """Initializes components according to the `BuildArtifact`'s `init_order`,
+        and returns them as a dict, where the key is the component name.
+        """
         
         log.debug("Building components...")
         components: dict[str, Any] = {}

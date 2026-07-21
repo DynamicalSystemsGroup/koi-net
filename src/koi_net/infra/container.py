@@ -13,7 +13,18 @@ if TYPE_CHECKING:
 
 
 class NodeContainer:
-    """Dummy 'shape' for node containers built by assembler."""
+    """Container object returned by assembler, contains components, exposes 
+    lifecycle methods.
+    
+    This class expects the following components to exist, which MUST be
+    included in any assembly: `log`, `root_dir`, `logging_context`,
+    `shutdown_signal`, and `exception_queue`. `BaseAssembly` is a base
+    class implementing these components for that purpose.
+    
+    The lifecycle methods exposed by the container proxy to the lifecycle
+    object it creates on initialization.
+    """
+    
     _artifact: BuildArtifact
     _lifecyle: NodeLifecycle
 
