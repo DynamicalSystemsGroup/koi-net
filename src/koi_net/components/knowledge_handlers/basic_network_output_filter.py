@@ -11,22 +11,22 @@ from ..graph import NetworkGraph
 
 @dataclass
 class BasicNetworkOutputFilter(KnowledgeHandler):
+    """Sets network targets of outgoing event for knowledge object.
+            
+    Allows broadcasting of all RID types this node is an event provider 
+    for (set in node profile), and other nodes have subscribed to. All 
+    nodes will also broadcast events about their own (internally sourced) 
+    KOI node, and KOI edges that they are part of, regardless of their 
+    node profile configuration. Finally, nodes will also broadcast about 
+    edges to the other node involved (regardless of if they are subscribed).
+    """
+    
     identity: NodeIdentity
     graph: NetworkGraph
     
     handler_type = HandlerType.Network
     
     def handle(self, kobj: KnowledgeObject):
-        """Sets network targets of outgoing event for knowledge object.
-        
-        Allows broadcasting of all RID types this node is an event provider 
-        for (set in node profile), and other nodes have subscribed to. All 
-        nodes will also broadcast events about their own (internally sourced) 
-        KOI node, and KOI edges that they are part of, regardless of their 
-        node profile configuration. Finally, nodes will also broadcast about 
-        edges to the other node involved (regardless of if they are subscribed).
-        """
-        
         involves_this_node = False
         # internally source knowledge objects
         if kobj.source is None:

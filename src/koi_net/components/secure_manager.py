@@ -82,11 +82,12 @@ class SecureManager:
         
     def handle_unknown_node(self, envelope: SignedEnvelope) -> Bundle | None:
         """Attempts to find node profile in provided envelope.
-        
+
         If an unknown node sends an envelope, it may still be able to be
         validated if that envelope contains their node profile. This is
         essential for allowing unknown nodes to handshake and introduce
-        themselves. Only an `EventsPayload` contain a `NEW` event for a 
+        themselves. Only an :class:`~koi_net.protocol.api.models.EventsPayload`
+        containing a :attr:`~koi_net.protocol.event.EventType.NEW` event for a
         node profile for the source node is permissible.
         """
         if type(envelope.payload) != EventsPayload:

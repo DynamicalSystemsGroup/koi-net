@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 project = "koi-net"
 copyright = "Dynamical Systems Group"
 author = "Luke Miller"
-release = "1.3.0-beta.9"
+release = "2.1.0"
 
 extensions = [
     "sphinx.ext.autodoc",

@@ -13,9 +13,10 @@ class Assembler:
     """Assembles components into a container. The "blueprint" of the
     dependency injection system, derived classes define components
     as class variables.
-    
-    Initializing this class will return a `NodeContainer`, which can be
-    overriden by setting the `_container` class variable.
+
+    Initializing this class will return a
+    :class:`~koi_net.infra.container.NodeContainer`, which can be
+    overriden by setting the ``_container`` class variable.
     """
     
     _container: type[NodeContainer] = NodeContainer
@@ -45,7 +46,9 @@ class Assembler:
     
     @staticmethod
     def _build_components(artifact: BuildArtifact):
-        """Initializes components according to the `BuildArtifact`'s `init_order`,
+        """Initializes components according to the
+        :class:`~koi_net.infra.build_artifact.BuildArtifact`'s
+        :attr:`~koi_net.infra.build_artifact.BuildArtifact.init_order`,
         and returns them as a dict, where the key is the component name.
         """
         

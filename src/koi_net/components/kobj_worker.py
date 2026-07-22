@@ -17,7 +17,7 @@ STOP_WORKER = End()
 
 @dataclass
 class KnowledgeProcessingWorker(ThreadedComponent):
-    """Thread worker that processes the `kobj_queue`."""
+    """Thread worker that processes the :attr:`.kobj_queue`."""
     
     config: BaseNodeConfig
     kobj_queue: KobjQueue
@@ -29,6 +29,13 @@ class KnowledgeProcessingWorker(ThreadedComponent):
         super().stop()
         
     def run(self):
+        """Main loop of knowledge processing worker thread.
+        
+        Dequeues knowledge objects and sends them to the knowledge pipeline
+        for processing. Gracefully shuts down upon dequeueing
+        :obj:`~koi_net.components.kobj_worker.STOP_WORKER` sentinel.
+        """
+        
         while True:
             try:
                 item = self.kobj_queue.q.get(timeout=self.config.koi_net.kobj_worker.queue_timeout)

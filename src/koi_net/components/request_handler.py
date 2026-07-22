@@ -96,7 +96,15 @@ class RequestHandler:
         path: str, 
         request: RequestModels,
     ) -> ResponseModels | None:
-        """Makes a request to a node."""
+        """Makes a request to a node.
+        
+        Wraps request object in a signed envelope, and validates the
+        signed envelope it receives in response before returning the
+        unwrapped response model.
+        
+        Catches HTTP and protocol errors, and handles or reraises them.
+        """
+        
         if node == self.identity.rid:
             raise SelfRequestError("Don't talk to yourself")
         
@@ -169,8 +177,9 @@ class RequestHandler:
         **kwargs
     ) -> None:
         """Broadcasts events to a node.
-        
-        Pass `EventsPayload` object, or see `protocol.api_models.EventsPayload` for available kwargs.
+
+        Pass an :class:`~koi_net.protocol.api.models.EventsPayload` object as
+        ``req``, or its fields as kwargs.
         """
         request = req or EventsPayload.model_validate(kwargs)
         self.make_request(node, BROADCAST_EVENTS_PATH, request)
@@ -183,8 +192,9 @@ class RequestHandler:
         **kwargs
     ) -> EventsPayload:
         """Polls events from a node.
-        
-        Pass `PollEvents` object as `req` or fields as kwargs.
+
+        Pass a :class:`~koi_net.protocol.api.models.PollEvents` object as
+        ``req`` or fields as kwargs.
         """
         request = req or PollEvents.model_validate(kwargs)
         resp = self.make_request(node, POLL_EVENTS_PATH, request)
@@ -198,8 +208,9 @@ class RequestHandler:
         **kwargs
     ) -> RidsPayload:
         """Fetches RIDs from a node.
-        
-        Pass `FetchRids` object as `req` or fields as kwargs.
+
+        Pass a :class:`~koi_net.protocol.api.models.FetchRids` object as
+        ``req`` or fields as kwargs.
         """
         request = req or FetchRids.model_validate(kwargs)
         resp = self.make_request(node, FETCH_RIDS_PATH, request)
@@ -213,8 +224,9 @@ class RequestHandler:
         **kwargs
     ) -> ManifestsPayload:
         """Fetches manifests from a node.
-        
-        Pass `FetchManifests` object as `req` or fields as kwargs.
+
+        Pass a :class:`~koi_net.protocol.api.models.FetchManifests` object as
+        ``req`` or fields as kwargs.
         """
         request = req or FetchManifests.model_validate(kwargs)
         resp = self.make_request(node, FETCH_MANIFESTS_PATH, request)
@@ -228,8 +240,9 @@ class RequestHandler:
         **kwargs
     ) -> BundlesPayload:
         """Fetches bundles from a node.
-        
-        Pass `FetchBundles` object as `req` or fields as kwargs.
+
+        Pass a :class:`~koi_net.protocol.api.models.FetchBundles` object as
+        ``req`` or fields as kwargs.
         """
         request = req or FetchBundles.model_validate(kwargs)
         resp = self.make_request(node, FETCH_BUNDLES_PATH, request)

@@ -3,10 +3,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class EnvConfig(BaseSettings):
     """Config for environment variables.
-    
+
     Variables set in this config class will be validated against the
     environment that the code is executed in. Names are case insensitive,
-    so `priv_key_password` would validate `PRIV_KEY_PASSWORD` in the
+    so :attr:`.priv_key_password` would validate ``PRIV_KEY_PASSWORD`` in the
     environment.
     """
     

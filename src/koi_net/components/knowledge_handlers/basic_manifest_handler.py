@@ -8,18 +8,20 @@ from ..cache import Cache
 
 @dataclass
 class BasicManifestHandler(KnowledgeHandler):
+    """Normalized event decider based on manifest and cache state.
+
+    Stops processing for manifests which have the same hash, or aren't
+    newer than the cached version. Sets the normalized event type to
+    :attr:`~koi_net.protocol.event.EventType.NEW` or
+    :attr:`~koi_net.protocol.event.EventType.UPDATE` depending on whether the
+    RID was previously known.
+    """
+    
     cache: Cache
     
     handler_type = HandlerType.Manifest
     
     def handle(self, kobj: KnowledgeObject):
-        """Normalized event decider based on manifest and cache state.
-    
-        Stops processing for manifests which have the same hash, or aren't 
-        newer than the cached version. Sets the normalized event type to 
-        `NEW` or `UPDATE` depending on whether the RID was previously known.
-        """
-        
         prev_bundle = self.cache.read(kobj.rid)
 
         if prev_bundle:

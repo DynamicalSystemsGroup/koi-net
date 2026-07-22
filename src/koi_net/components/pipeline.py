@@ -19,6 +19,10 @@ from ..protocol.knowledge_object import KnowledgeObject
 
 @dataclass
 class KnowledgePipeline:
+    """The knowledge pipeline, which ties together many systems
+    to process knowldge objects.
+    """
+    
     log: Logger
     cache: Cache
     request_handler: RequestHandler
@@ -36,14 +40,23 @@ class KnowledgePipeline:
         handler_type: HandlerType,
         kobj: KnowledgeObject
     ) -> KnowledgeObject | StopChain:
-        """Calls handlers of provided type, chaining their inputs and outputs together.
-        
-        The knowledge object provided when this function is called will be passed to the first handler. A handler may return one of three types: 
-        - `KnowledgeObject` - to modify the knowledge object for the next handler in the chain
-        - `None` - to keep the same knowledge object for the next handler in the chain
-        - `STOP_CHAIN` - to stop the handler chain and immediately exit the processing pipeline
-        
-        Handlers will only be called in the chain if their handler and RID type match that of the inputted knowledge object. 
+        """Calls handlers of provided type, chaining their inputs and
+        outputs together.
+
+        The knowledge object provided when this function is called will
+        be passed to the first handler. A handler may return one of three
+        types:
+
+        - :class:`~koi_net.protocol.knowledge_object.KnowledgeObject` - to
+          modify the knowledge object for the next handler in the chain
+        - ``None`` - to keep the same knowledge object for the next handler
+          in the chain
+        - :obj:`~koi_net.components.interfaces.knowledge_handler.STOP_CHAIN`
+          - to stop the handler chain and immediately exit the processing
+          pipeline
+
+        Handlers will only be called in the chain if their handler, RID,
+        and event type match that of the inputted knowledge object.
         """
         
         for handler in self.knowledge_handlers:
@@ -80,36 +93,67 @@ class KnowledgePipeline:
         return kobj
     
     def process(self, kobj: KnowledgeObject):
-        """Sends knowledge object through knowledge processing pipeline.
-        
-        Handler chains are called in between major events in the 
-        pipeline, indicated by their handler type. Each handler type is 
-        guaranteed to have access to certain knowledge, and may affect a 
-        subsequent action in the pipeline. The five handler types are as 
+        """Sends a knowledge object through knowledge processing pipeline.
+
+        Handler chains are called in between major events in the
+        pipeline, indicated by their handler type. Each handler type is
+        guaranteed to have access to certain knowledge, and may affect a
+        subsequent action in the pipeline. The five handler types are as
         follows:
-        - RID - provided RID; if event type is `FORGET`, this handler 
-        decides whether to delete the knowledge from the cache by 
-        setting the normalized event type to `FORGET`, otherwise this 
-        handler decides whether to validate the manifest (and fetch it 
-        if not provided). After processing, if event type is `FORGET`, 
-        the manifest and contents will be retrieved from the local cache, 
-        and indicate the last state of the knowledge before it was 
-        deleted.
-        - Manifest - provided RID, manifest; decides whether to validate 
-        the bundle (and fetch it if not provided).
-        - Bundle - provided RID, manifest, contents (bundle); decides 
-        whether to write knowledge to the cache by setting the 
-        normalized event type to `NEW` or `UPDATE`.
-        - Network - provided RID, manifest, contents (bundle); decides 
-        which nodes (if any) to broadcast an event about this knowledge 
-        to.
-        - Final - provided RID, manifests, contents (bundle); final 
-        action taken after network broadcast.
-        
-        The pipeline may be stopped by any point by a single handler 
-        returning the `STOP_CHAIN` sentinel. In that case, the process 
-        will exit immediately. Further handlers of that type and later 
-        handler chains will not be called.
+
+        :attr:`~koi_net.components.interfaces.knowledge_handler.HandlerType.RID`
+            - Provided ``kobj.rid``.
+            - If event type is
+              :attr:`~koi_net.protocol.event.EventType.FORGET`, this handler
+              decides whether to delete the knowledge from the cache by
+              setting the normalized event type to
+              :attr:`~koi_net.protocol.event.EventType.FORGET`. If the
+              specified knowledge cannot be found in cache, the pipeline
+              will exit.
+            - Otherwise this handler decides whether to validate the
+              manifest (and fetch it if not provided). If the manifest
+              cannot be found or fetched from the source node, the pipeline
+              will exit.
+            - After processing, if event type is
+              :attr:`~koi_net.protocol.event.EventType.FORGET`, the
+              manifest and contents will be retrieved from the local cache,
+              and indicate the last state of the knowledge before it was
+              deleted.
+
+        :attr:`~koi_net.components.interfaces.knowledge_handler.HandlerType.Manifest`
+            - Provided ``kobj.rid``, ``kobj.manifest``.
+            - This handler type is not called when the event type is
+              :attr:`~koi_net.protocol.event.EventType.FORGET`.
+            - Decides whether to validate the bundle (and fetch it if not
+              provided). If the bundle cannot be found or fetched from the
+              source node, the pipeline will exit.
+
+        :attr:`~koi_net.components.interfaces.knowledge_handler.HandlerType.Bundle`
+            - Provided ``kobj.rid``, ``kobj.manifest``, ``kobj.bundle``.
+            - Decides whether to write knowledge to the cache by setting
+              the normalized event type to
+              :attr:`~koi_net.protocol.event.EventType.NEW` or
+              :attr:`~koi_net.protocol.event.EventType.UPDATE`. If the
+              normalized event type remains unset, the pipeline will exit.
+
+        :attr:`~koi_net.components.interfaces.knowledge_handler.HandlerType.Network`
+            - Provided ``kobj.rid``, ``kobj.manifest``, ``kobj.bundle``.
+            - Decides which nodes (if any) to broadcast an event about this
+              knowledge to by adding node RIDs to the
+              ``kobj.network_targets`` set. If no network targets are set,
+              final handlers are still called. An event formed from the
+              knowledge object bundle and normalized event will be pushed
+              into the event queue for each target node.
+
+        :attr:`~koi_net.components.interfaces.knowledge_handler.HandlerType.Final`
+            - Provided ``kobj.rid``, ``kobj.manifest``, ``kobj.bundle``.
+            - Final action taken after network broadcast.
+
+        The pipeline may be stopped by any point by a single handler
+        returning the
+        :obj:`~koi_net.components.interfaces.knowledge_handler.STOP_CHAIN`
+        sentinel. In that case, the process will exit immediately. Further
+        handlers of that type and later handler chains will not be called.
         """
         
         self.log.debug(f"Handling {kobj!r}")

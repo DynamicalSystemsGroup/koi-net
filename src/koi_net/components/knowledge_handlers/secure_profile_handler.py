@@ -12,6 +12,12 @@ from ..interfaces import KnowledgeHandler, STOP_CHAIN, HandlerType
 
 @dataclass
 class SecureProfileHandler(KnowledgeHandler):
+    """Validates the identity and public keys of incoming nodes.
+    
+    Interrupts knowledge processing for node profiles which have a mismatched
+    public key and hash, or using the same base url as this node.
+    """
+    
     identity: NodeIdentity
     
     handler_type = HandlerType.Bundle

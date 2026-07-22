@@ -78,7 +78,8 @@ class NodeServer(ThreadedComponent):
             return response
         
     def protocol_error_handler(self, request, exc: ProtocolError):
-        """Catches `ProtocolError` and returns an `ErrorResponse` payload."""
+        """Catches :exc:`~koi_net.exceptions.ProtocolError` and returns an
+        :class:`~koi_net.protocol.api.models.ErrorResponse` payload."""
         from fastapi.responses import JSONResponse
         
         self.log.error(exc)

@@ -8,7 +8,7 @@ from ..protocol.node import NodeProfile
 
 @dataclass
 class NodeIdentity:
-    """Represents a node's identity (RID, profile)."""
+    """Proxied access to a node's identity (RID, profile)."""
     
     config: BaseNodeConfig
     

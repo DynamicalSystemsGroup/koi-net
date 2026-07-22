@@ -12,6 +12,8 @@ from ..cache import Cache
 
 @dataclass
 class ForgetNodeHandler(KnowledgeHandler):
+    """Removes edges connected to forgotten nodes."""
+    
     cache: Cache
     kobj_queue: KobjQueue
     
@@ -19,8 +21,6 @@ class ForgetNodeHandler(KnowledgeHandler):
     rid_types=(KoiNetNode,)
     
     def handle(self, kobj: KnowledgeObject):
-        """Removes edges to forgotten nodes."""
-    
         if kobj.normalized_event_type != EventType.FORGET:
             return
         

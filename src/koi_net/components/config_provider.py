@@ -13,7 +13,7 @@ from ..config.base import BaseNodeConfig
 DELEGATE = "_delegate"
 
 class ConfigProvider:
-    """Loads node config from a YAML file, and proxies access to it."""
+    """Loads node config from a YAML file, and provides proxied access to it."""
     
     _file_path: str = "config.yaml"
     _file_content: str
@@ -21,6 +21,7 @@ class ConfigProvider:
     _schema: type[BaseNodeConfig]
     _root_dir: Path
     
+    # the delegate is the pydantic config class which access is proxied to
     _delegate: BaseNodeConfig
     
     def __init__(self, config_schema, root_dir):
@@ -45,9 +46,9 @@ class ConfigProvider:
     
     def __setattr__(self, name, value):
         """Overrides set attribute for ALL members of this class.
-        
+
         Any non proxying set attribute call needs to be done using
-        `object.__attribute__(self, name)`.
+        ``object.__attribute__(self, name)``.
         """
         
         delegate = self._get_delegate()
@@ -59,6 +60,7 @@ class ConfigProvider:
         Useful for interfacing with CLI, catch exception and print the 
         missing vars to the screen.
         """
+        
         for field in self._schema.model_fields.values():
             field_type = field.annotation
             if inspect.isclass(field_type) and issubclass(field_type, EnvConfig):
@@ -76,6 +78,7 @@ class ConfigProvider:
     
     def _load_from_yaml(self):
         """Loads config from YAML file, or generates it if missing."""
+        
         from ruamel.yaml import YAML
         yaml = YAML()
         
@@ -95,6 +98,7 @@ class ConfigProvider:
         
     def save_to_yaml(self):
         """Saves config to YAML file."""
+        
         from ruamel.yaml import YAML
         yaml = YAML()
         
@@ -115,6 +119,8 @@ class ConfigProvider:
                 raise
             
     def wipe(self):
+        """Deletes config file and private key PEM file."""
+        
         try:
             os.remove(self._root_dir / self._file_path)
         except FileNotFoundError:
@@ -127,8 +133,12 @@ class ConfigProvider:
     
     @contextmanager
     def mutate(self):
+        """Helper method to modify and write config changes."""
+        
         yield self._get_delegate()
         self.save_to_yaml()
         
     def start(self):
+        """Saves default config to disk on startup."""
+        
         self.save_to_yaml()

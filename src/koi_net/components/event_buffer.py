@@ -9,7 +9,10 @@ from koi_net.protocol.event import Event
 
 @dataclass
 class EventBuffer:
-    """Stores outgoing events sent to other nodes."""
+    """Stores outgoing events sent to other nodes.
+    
+    Used for both the poll and broadcast event buffer components.
+    """
 
     buffers: dict[KoiNetNode, list[Event]] = field(init=False, default_factory=dict)
     start_time: dict[KoiNetNode, float] = field(init=False, default_factory=dict)

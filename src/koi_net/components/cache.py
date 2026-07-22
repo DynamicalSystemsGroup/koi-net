@@ -13,6 +13,12 @@ from koi_net.config.base import BaseNodeConfig
 
 @dataclass
 class Cache:
+    """Default storage component for a KOI node.
+    
+    Stores bundles as JSON documents within a cache directory, where the
+    filename is the base-64 encoding of an RID.
+    """
+    
     config: BaseNodeConfig
     root_dir: Path
     
@@ -26,6 +32,7 @@ class Cache:
 
     def write(self, bundle: Bundle) -> Bundle:
         """Writes bundle to cache, returns a Bundle."""
+        
         if not os.path.exists(self.directory_path):
             os.makedirs(self.directory_path)
             
@@ -44,7 +51,8 @@ class Cache:
         )
 
     def read(self, rid: RID) -> Bundle | None:
-        """Reads and returns CacheEntry from RID cache."""
+        """Attempts to read an RIDed ``Bundle`` from cache."""
+        
         try:
             with open(
                 file=self.file_path_to(rid), 
@@ -65,6 +73,8 @@ class Cache:
             return None
     
     def list_rids(self, rid_types: list[RIDType] | None = None) -> list[RID]:
+        """Returns a list of the RIDs of all bundles in cache."""
+        
         if not os.path.exists(self.directory_path):
             return []
         
@@ -81,6 +91,7 @@ class Cache:
                 
     def delete(self, rid: RID) -> None:
         """Deletes cache bundle."""
+        
         try:
             os.remove(self.file_path_to(rid))
         except FileNotFoundError:
@@ -88,6 +99,7 @@ class Cache:
 
     def drop(self) -> None:
         """Deletes all cache bundles."""
+        
         try:
             shutil.rmtree(self.directory_path)
         except FileNotFoundError:

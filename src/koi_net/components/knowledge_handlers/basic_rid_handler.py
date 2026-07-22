@@ -8,6 +8,9 @@ from ..identity import NodeIdentity
 
 @dataclass
 class BasicRidHandler(KnowledgeHandler):
+    """Blocks external events about a node's identity, approves FORGET event
+    which will then skip any manifest handlers."""
+    
     identity: NodeIdentity
     
     handler_type = HandlerType.RID

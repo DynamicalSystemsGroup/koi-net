@@ -14,6 +14,7 @@ from ..protocol.knowledge_object import KnowledgeObject
 @dataclass
 class KobjQueue:
     """Queue for knowledge objects entering the processing pipeline."""
+    
     log: Logger
     shutdown_signal: threading.Event
     
@@ -54,7 +55,7 @@ class KobjQueue:
         self.log.debug(f"Queued {_kobj!r}")
     
     def wait(self):
-        """Safe join, prevents deadlock if `kobj_worker` fails."""
+        """Safe join, prevents deadlock if ``kobj_worker`` fails."""
         while not self.shutdown_signal.wait(0.1):
             if self.q.unfinished_tasks == 0:
                 return

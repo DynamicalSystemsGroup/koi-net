@@ -9,7 +9,8 @@ from .config_provider import ConfigProvider
 
 @dataclass
 class PortManager:
-    """Changes port if already in use by another process."""
+    """Acquires a port for the :class:`~koi_net.components.server.NodeServer`,
+    looks for free ports if specified one already in use."""
     
     log: Logger
     config: ConfigProvider | FullNodeConfig
@@ -19,6 +20,11 @@ class PortManager:
         self.acquire_port()
         
     def acquire_port(self):
+        """Attempts to acquire server port defined in config, increments
+        port number if port in use until an open one is found. Config is
+        then updated if new port acquired.
+        """
+        
         base_url_is_derived = (self.config.koi_net.node_profile.base_url == self.config.server.url)
         
         changed_port: bool = False
