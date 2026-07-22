@@ -50,3 +50,10 @@ if __name__ == "__main__":
 See `examples/coordinator.py` for a more complex example node, or see [the docs](https://dynamicalsystemsgroup.github.io/koi-net) for more information on the KOI-net framework.
 
 This framework depends on [rid-lib](https://github.com/DynamicalSystemsGroup/rid-lib), the Python implementation of the RID protocol.
+
+# Documentation
+
+This project uses Sphinx to generate documentation from docstrings. The `docs.yml` GitHub workflow automatically build and deploys the docs to GitHub Pages. To build the docs locally, run the following command:
+```shell
+$ uv run --extra docs sphinx-build -b html docs docs/_build/html
+```
