@@ -23,12 +23,14 @@ class NodePoller(ThreadedComponent):
     
     def poll(self):
         """Polls neighbor nodes and processes returned events."""
+        
         for node_rid, events in self.resolver.poll_neighbors().items():
             for event in events:
                 self.kobj_queue.push(event=event, source=node_rid)
 
     def run(self):
-        """Runs polling event loop."""
+        """Runs polling event loop in thread."""
+        
         while not self.exit_event.is_set():
             start_time = time.monotonic()
             self.poll()

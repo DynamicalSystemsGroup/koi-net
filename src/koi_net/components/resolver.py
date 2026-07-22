@@ -102,13 +102,14 @@ class NetworkResolver:
     
     def poll_neighbors(self) -> dict[KoiNetNode, list[Event]]:
         """Polls all neighbor nodes and returns compiled list of events.
-        
+
         Neighbor nodes include any node this node shares an edge with,
         or the first contact, if no neighbors are found.
-        
-        NOTE: This function does not poll nodes that don't share edges
-        with this node. Events sent by non neighboring nodes will not
-        be polled.
+
+        .. note::
+            This function does not poll nodes that don't share edges
+            with this node. Events sent by non neighboring nodes will not
+            be polled.
         """
         
         neighbors: list[KoiNetNode] = []

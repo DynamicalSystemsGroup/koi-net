@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class ThreadedComponent:
-    """Base class for threaded component. Derived classes MUST set `self.root_dir`."""
+    """Base class for threaded component. Derived classes MUST define ``root_dir``."""
     
     log: Logger
     logging_context: "LoggingContext"

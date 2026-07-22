@@ -51,7 +51,7 @@ class Cache:
         )
 
     def read(self, rid: RID) -> Bundle | None:
-        """Attempts to reads an RIDed `Bundle` from cache."""
+        """Attempts to read an RIDed ``Bundle`` from cache."""
         
         try:
             with open(

@@ -21,6 +21,7 @@ class ConfigProvider:
     _schema: type[BaseNodeConfig]
     _root_dir: Path
     
+    # the delegate is the pydantic config class which access is proxied to
     _delegate: BaseNodeConfig
     
     def __init__(self, config_schema, root_dir):
@@ -45,9 +46,9 @@ class ConfigProvider:
     
     def __setattr__(self, name, value):
         """Overrides set attribute for ALL members of this class.
-        
+
         Any non proxying set attribute call needs to be done using
-        `object.__attribute__(self, name)`.
+        ``object.__attribute__(self, name)``.
         """
         
         delegate = self._get_delegate()

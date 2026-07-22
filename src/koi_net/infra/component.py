@@ -11,8 +11,8 @@ class CompType(StrEnum):
     """Defines component types.
     
     Singletons are callable components (typically classes) which need to
-    be instantiated prior to use. They define their dependencies in their 
-    function signature (this is `__init__` for classes).
+    be instantiated prior to use. They define their dependencies in their
+    function signature (this is ``__init__`` for classes).
     
     Objects are constant components that are simply passed "as is."
     """

@@ -45,9 +45,10 @@ class Handshaker:
         
     def handshake_with(self, target: KoiNetNode):
         """Initiates a handshake with target node.
-        
-        Pushes successive `FORGET` and `NEW` events to target node to
-        reset the target's cache in case it already knew this node. 
+
+        Pushes successive :attr:`~koi_net.protocol.event.EventType.FORGET`
+        and :attr:`~koi_net.protocol.event.EventType.NEW` events to target
+        node to reset the target's cache in case it already knew this node.
         """
         
         self.log.debug(f"Initiating handshake with {target}")

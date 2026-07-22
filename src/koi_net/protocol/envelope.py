@@ -19,8 +19,8 @@ class SignedEnvelope(BaseModel, Generic[T]):
     
     def verify_with(self, pub_key: PublicKey):
         """Verifies signed envelope with public key.
-        
-        Raises `cryptography.exceptions.InvalidSignature` on failure.
+
+        :raises cryptography.exceptions.InvalidSignature: if verification fails
         """
         
         # IMPORTANT: calling `model_dump()` loses all typing! when converting between SignedEnvelope and UnsignedEnvelope, use the Pydantic classes, not the dictionary form
@@ -47,7 +47,7 @@ class UnsignedEnvelope(BaseModel, Generic[T]):
     target_node: KoiNetNode
     
     def sign_with(self, priv_key: PrivateKey) -> SignedEnvelope[T]:
-        """Signs with private key and returns `SignedEnvelope`."""
+        """Signs with private key and returns :class:`.SignedEnvelope`."""
         
         serialized_unsigned_envelope = self.model_dump_json(
             exclude_none=True)

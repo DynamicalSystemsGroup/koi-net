@@ -16,6 +16,15 @@ from ..cache import Cache
 
 @dataclass
 class EdgeNegotiationHandler(KnowledgeHandler):
+    """Handles edge negotiation process.
+    
+    Automatically approves proposed edges if they request RID types this
+    node can provide (or KOI node, edge RIDs). Validates the edge type
+    is allowed for the node type (partial nodes cannot use webhooks). If
+    edge is invalid, a :attr:`~koi_net.protocol.event.EventType.FORGET`
+    event is sent to the other node.
+    """
+    
     identity: NodeIdentity
     cache: Cache
     event_queue: EventQueue
@@ -26,14 +35,6 @@ class EdgeNegotiationHandler(KnowledgeHandler):
     event_types = (EventType.NEW, EventType.UPDATE)
     
     def handle(self, kobj: KnowledgeObject):
-        """Handles edge negotiation process.
-        
-        Automatically approves proposed edges if they request RID types this 
-        node can provide (or KOI node, edge RIDs). Validates the edge type 
-        is allowed for the node type (partial nodes cannot use webhooks). If 
-        edge is invalid, a `FORGET` event is sent to the other node.
-        """
-
         # only handle incoming events (ignore internal edge knowledge objects)
         if kobj.source is None: 
             return

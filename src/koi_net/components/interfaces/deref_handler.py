@@ -12,21 +12,23 @@ if TYPE_CHECKING:
 @dataclass
 class DerefHandler:
     """Base class for dereference handler components.
-    
-    Derived classes MUST set the `rid_types` to a tuple of acceptable 
-    types. The `handle` method MUST be overriden, and may be passed any
+
+    Derived classes MUST set the :attr:`.rid_types` to a tuple of acceptable
+    types. The :meth:`.handle` method MUST be overriden, and may be passed any
     RID of the specified allowed RID types.
-    
-    NOTE: If you only want to allow a single RID type, remember to add
-    after so it is a valid tuple. Example:
-    ```
-    @dataclass
-    class MyDerefHandler(DerefHandler):
-        rid_types=(CustomType,)
-        
-        def handle(self, rid: CustomType):
-            return
-    ```
+
+    .. note::
+        If you only want to allow a single RID type, remember to add a
+        trailing comma after so it is a valid tuple.
+
+    Example::
+
+        @dataclass
+        class MyDerefHandler(DerefHandler):
+            rid_types=(CustomType,)
+
+            def handle(self, rid: CustomType):
+                return
     """
     
     log: Logger

@@ -12,6 +12,7 @@ from .kobj_queue import KobjQueue
 @dataclass
 class ErrorHandler:
     """Handles network and protocol errors that may occur during requests."""
+    
     log: Logger
     kobj_queue: KobjQueue
     
@@ -44,7 +45,9 @@ class ErrorHandler:
     ):
         """Handles protocol errors that occur during network requests.
         
-        Attempts handshake when this node is unknown to target.
+        Currently none. Previously attempted handshake when this node was 
+        unknown to target. Removed due to circular dependencies and
+        unpredictable behavior.
         """
         
         self.log.info(f"Handling protocol error {error_type} for node {node!r}")

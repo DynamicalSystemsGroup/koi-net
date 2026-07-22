@@ -13,14 +13,15 @@ if TYPE_CHECKING:
 
 
 class NodeContainer:
-    """Container object returned by assembler, contains components, exposes 
+    """Container object returned by assembler, contains components, exposes
     lifecycle methods.
-    
+
     This class expects the following components to exist, which MUST be
-    included in any assembly: `log`, `root_dir`, `logging_context`,
-    `shutdown_signal`, and `exception_queue`. `BaseAssembly` is a base
+    included in any assembly: :attr:`.log`, :attr:`.root_dir`,
+    :attr:`.logging_context`, :attr:`.shutdown_signal`, and
+    :attr:`.exception_queue`. :class:`~koi_net.base.BaseAssembly` is a base
     class implementing these components for that purpose.
-    
+
     The lifecycle methods exposed by the container proxy to the lifecycle
     object it creates on initialization.
     """

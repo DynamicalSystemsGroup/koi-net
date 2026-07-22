@@ -17,7 +17,8 @@ from .interfaces import ThreadedComponent
 
 
 class End:
-    """Class for STOP_WORKER sentinel pushed to worker queues."""
+    """Class for :obj:`~koi_net.components.event_worker.STOP_WORKER` sentinel
+    pushed to worker queues."""
     pass
 
 STOP_WORKER = End()
@@ -25,7 +26,7 @@ STOP_WORKER = End()
 
 @dataclass
 class EventProcessingWorker(ThreadedComponent):
-    """Thread worker that processes the `event_queue`."""
+    """Thread worker that processes the :attr:`.event_queue`."""
     
     config: BaseNodeConfig
     cache: Cache
@@ -47,10 +48,27 @@ class EventProcessingWorker(ThreadedComponent):
     
     @depends_on("kobj_worker")
     def stop(self):
+        """Signals thread to shutdown at end of queue via sentinel."""
+        
         self.event_queue.q.put(STOP_WORKER)
         super().stop()
     
     def run(self):
+        """Main loop of event worker thread.
+        
+        Dequeues events from :attr:`.event_queue` and pushes them to
+        :attr:`.poll_event_buf` or :attr:`.broadcast_event_buf` depending on
+        the node type. Special handling for communication with first contact
+        node, which is assumed to be a full node if its profile cannot
+        be found.
+
+        Automatically flushes :attr:`.broadcast_event_buf` when it reaches
+        max length, or max wait time.
+
+        Gracefully shuts down upon dequeueing
+        :obj:`~koi_net.components.event_worker.STOP_WORKER` sentinel.
+        """
+        
         while True:
             try:
                 item = self.event_queue.q.get(

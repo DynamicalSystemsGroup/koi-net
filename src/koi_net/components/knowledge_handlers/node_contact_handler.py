@@ -19,6 +19,14 @@ from ..graph import NetworkGraph
 
 @dataclass
 class NodeContactHandler(KnowledgeHandler):
+    """Makes contact with providers of RID types of interest.
+    
+    When an incoming node knowledge object is identified as a provider
+    of an RID type of interest, this handler will propose a new edge 
+    subscribing to future node events, and fetch existing nodes to catch 
+    up to the current state. Also runs at startup on cached nodes.
+    """
+    
     identity: NodeIdentity
     cache: Cache
     config: BaseNodeConfig
@@ -113,13 +121,6 @@ class NodeContactHandler(KnowledgeHandler):
         self.log.info("Done")
     
     def handle(self, kobj: KnowledgeObject):
-        """Makes contact with providers of RID types of interest.
-        
-        When an incoming node knowledge object is identified as a provider
-        of an RID type of interest, this handler will propose a new edge 
-        subscribing to future node events, and fetch existing nodes to catch 
-        up to the current state.
-        """
         self.process_node(kobj.rid, kobj.bundle)
     
     @depends_on("graph", "kobj_worker", "handshaker")

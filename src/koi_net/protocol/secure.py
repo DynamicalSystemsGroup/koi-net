@@ -59,16 +59,16 @@ class PrivateKey:
     
     @classmethod
     def generate(cls):
-        """Generates a new `Private Key`."""
+        """Generates a new :class:`.PrivateKey`."""
         return cls(priv_key=ec.generate_private_key(ec.SECP256R1()))
 
     def public_key(self) -> "PublicKey":
-        """Returns instance of `PublicKey` dervied from this private key."""
+        """Returns instance of :class:`.PublicKey` derived from this private key."""
         return PublicKey(self.priv_key.public_key())
     
     @classmethod
     def from_pem(cls, priv_key_pem: str, password: str):
-        """Loads `PrivateKey` from encrypted PEM string."""
+        """Loads :class:`.PrivateKey` from encrypted PEM string."""
         return cls(
             priv_key=serialization.load_pem_private_key(
                 data=priv_key_pem.encode(),
@@ -77,7 +77,7 @@ class PrivateKey:
         )
 
     def to_pem(self, password: str) -> str:
-        """Saves `PrivateKey` to encrypted PEM string."""
+        """Saves :class:`.PrivateKey` to encrypted PEM string."""
         return self.priv_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
@@ -112,7 +112,7 @@ class PublicKey:
     
     @classmethod
     def from_pem(cls, pub_key_pem: str):
-        """Loads `PublicKey` from PEM string."""
+        """Loads :class:`.PublicKey` from PEM string."""
         return cls(
             pub_key=serialization.load_pem_public_key(
                 data=pub_key_pem.encode()
@@ -120,7 +120,7 @@ class PublicKey:
         )
         
     def to_pem(self) -> str:
-        """Saves `PublicKey` to PEM string."""
+        """Saves :class:`.PublicKey` to PEM string."""
         return self.pub_key.public_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
@@ -128,7 +128,7 @@ class PublicKey:
         
     @classmethod
     def from_der(cls, pub_key_der: str):
-        """Loads `PublicKey` from base64 encoded DER string."""
+        """Loads :class:`.PublicKey` from base64 encoded DER string."""
         return cls(
             pub_key=serialization.load_der_public_key(
                 data=b64decode(pub_key_der)
@@ -136,7 +136,7 @@ class PublicKey:
         )
     
     def to_der(self) -> str:
-        """Saves `PublicKey` to base64 encoded DER string."""
+        """Saves :class:`.PublicKey` to base64 encoded DER string."""
         return b64encode(
             self.pub_key.public_bytes(
                 encoding=serialization.Encoding.DER,
@@ -153,8 +153,8 @@ class PublicKey:
         
     def verify(self, signature: str, message: bytes):
         """Verifies a signature for a message.
-        
-        Raises `cryptography.exceptions.InvalidSignature` on failure.
+
+        :raises cryptography.exceptions.InvalidSignature: if verification fails
         """
         
         raw_signature_bytes = b64decode(signature)

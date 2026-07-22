@@ -20,7 +20,10 @@ class BundleSource(StrEnum):
 
 @dataclass
 class Effector:
-    """Subsystem for dereferencing RIDs."""
+    """Subsystem for dereferencing RIDs.
+    
+    Extensible for arbitrary RID types by creating dereference handlers.
+    """
     
     log: Logger
     cache: Cache
@@ -34,6 +37,8 @@ class Effector:
         self.log.info(f"Registered deref handler {handler.__class__.__name__}")
     
     def _try_cache(self, rid: RID) -> tuple[Bundle, BundleSource] | None:
+        """Attempts to find RID in cache."""
+        
         bundle = self.cache.read(rid)
         
         if bundle:
@@ -44,6 +49,8 @@ class Effector:
             return None
             
     def _try_handler(self, rid: RID) -> tuple[Bundle, BundleSource] | None:
+        """Attempts to retrieve RID by calling dereference handler."""
+        
         handler = next(
             (h for h in self.deref_handlers if type(rid) in h.rid_types), 
             None
@@ -63,6 +70,8 @@ class Effector:
             return None
         
     def _try_network(self, rid: RID) -> tuple[Bundle, KoiNetNode] | None:
+        """Attempts to find RID from provider nodes within the network."""
+        
         bundle, source = self.resolver.fetch_remote_bundle(rid)
         
         if bundle:
@@ -81,17 +90,16 @@ class Effector:
         write_through: bool = False
     ) -> Bundle | None:
         """Dereferences an RID.
-        
-        Attempts to dereference an RID by (in order) reading the cache, 
-        calling a bound action, or fetching from other nodes in the 
+
+        Attempts to dereference an RID by (in order) reading the cache,
+        calling a dereference handler, or fetching from other nodes in the
         newtork.
-        
-        Args:
-            rid: RID to dereference
-            refresh_cache: skips cache read when `True` 
-            use_network: enables fetching from other nodes when `True`
-            handle_result: sends resulting bundle to kobj queue when `True`
-            write_through: waits for kobj queue to empty when `True`
+
+        :param rid: RID to dereference
+        :param refresh_cache: skips cache read when ``True``
+        :param use_network: enables fetching from other nodes when ``True``
+        :param handle_result: sends resulting bundle to kobj queue when ``True``
+        :param write_through: waits for kobj queue to empty when ``True``
         """
         
         self.log.debug(f"Dereferencing {rid!r}")

@@ -20,8 +20,9 @@ log = structlog.stdlib.get_logger()
 
 
 class BuildArtifact:
-    """Used by the `Assembler` to determine the initialization, start
-    and stop order of components using a graph solver.
+    """Used by the :class:`~koi_net.infra.assembler.Assembler` to determine
+    the initialization, start and stop order of components using a graph
+    solver.
     """
     
     assembler: "Assembler"
@@ -55,7 +56,7 @@ class BuildArtifact:
     
     def build_init_graph(self):
         """Builds initialization dependency graph and component type map.
-        Results stored in `init_graph` and `comp_types`.
+        Results stored in :attr:`.init_graph` and :attr:`.comp_types`.
         
         Graph representation is an adjacency list: the key is a component 
         name, and the value is a tuple containing names of the depedencies.
@@ -94,7 +95,7 @@ class BuildArtifact:
         log.debug("Built init dependency graph")
                 
     def build_start_graph(self):
-        """Builds start dependency graph, results stored in `start_graph`."""
+        """Builds start dependency graph, results stored in :attr:`.start_graph`."""
         
         self.start_graph = {}
         start_components = {
@@ -121,7 +122,7 @@ class BuildArtifact:
         log.debug("Built start dependency graph")
         
     def build_stop_graph(self):
-        """Builds stop dependency graph, results stored in `start_graph`."""
+        """Builds stop dependency graph, results stored in :attr:`.stop_graph`."""
         
         self.stop_graph = {}
         
@@ -212,9 +213,11 @@ class BuildArtifact:
     
     def build_stop_order(self, start_order: list[str]) -> list[str]:
         """Builds component stop order.
-        
+
         Reverse of start order, only including components with a stop method.
-        NOTE: Components defining a stop method MUST also define a start method.
+
+        .. note::
+            Components defining a stop method MUST also define a start method.
         """
         
         stop_order = []

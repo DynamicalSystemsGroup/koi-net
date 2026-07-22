@@ -14,6 +14,7 @@ class QueuedEvent:
 @dataclass
 class EventQueue:
     """Queue for outgoing network events."""
+    
     q: Queue[QueuedEvent] = field(init=False, default_factory=Queue)
     
     def push(self, event: Event, target: KoiNetNode):

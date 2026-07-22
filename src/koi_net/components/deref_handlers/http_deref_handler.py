@@ -14,8 +14,8 @@ class HTTPDerefHandler(DerefHandler):
     rid_types=(HTTP, HTTPS)
     
     def handle(self, rid: RID):
-        """Sends a GET request to URL, returns a `Bundle` if the content
-        is JSON, otherwise returns `None`.
+        """Sends a GET request to URL, returns a ``Bundle`` if the content
+        is JSON, otherwise returns ``None``.
         """
         
         resp = httpx.get(

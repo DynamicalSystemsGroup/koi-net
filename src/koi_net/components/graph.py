@@ -61,8 +61,8 @@ class NetworkGraph:
         direction: Literal["in", "out"] | None = None,
     ) -> list[KoiNetEdge]:
         """Returns edges this node belongs to.
-        
-        All edges returned by default, specify `direction` to restrict 
+
+        All edges returned by default, specify ``direction`` to restrict
         to incoming or outgoing edges only.
         """
         
@@ -92,8 +92,8 @@ class NetworkGraph:
         allowed_type: RIDType | None = None
     ) -> list[KoiNetNode]:
         """Returns neighboring nodes this node shares an edge with.
-        
-        All neighboring nodes returned by default, specify `direction` 
+
+        All neighboring nodes returned by default, specify ``direction``
         to restrict to neighbors connected by incoming or outgoing edges
         only.
         """
