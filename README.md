@@ -14,7 +14,7 @@ For information about the KOI-net protocol, see the [official specification](htt
 (Optionally) create and activate a virtual environment, and install KOI-net:
 
 ```shell
-$ pip install koi-net
+pip install koi-net
 ```
 
 ## Create a Simple Partial Node
@@ -55,5 +55,5 @@ This framework depends on [rid-lib](https://github.com/DynamicalSystemsGroup/rid
 
 This project uses Sphinx to generate documentation from docstrings. The `docs.yml` GitHub workflow automatically build and deploys the docs to GitHub Pages. To build the docs locally, run the following command:
 ```shell
-$ uv run --extra docs sphinx-build -b html docs docs/_build/html
+uv run --extra docs sphinx-build -b html docs docs/_build/html
 ```
