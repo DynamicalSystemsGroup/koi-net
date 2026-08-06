@@ -4,6 +4,11 @@ on:
     tags:
       - 'v*.*.*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (e.g. v2.1.2)'
+        required: true
+        type: string
 
 jobs:
   build:
@@ -13,6 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
+        ref: ${{ inputs.tag || github.ref }}
         persist-credentials: false
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -30,7 +36,7 @@ jobs:
   
   publish-to-pypi:
     name: Publish Python distribution to PyPI
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || inputs.tag != ''
     needs:
     - build
     runs-on: ubuntu-latest
@@ -76,7 +82,8 @@ jobs:
     - name: Upload artifact signatures to GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        TAG_NAME: ${{ inputs.tag || github.ref_name }}
       run: >-
         gh release upload
-        "$GITHUB_REF_NAME" dist/**
+        "$TAG_NAME" dist/**
         --repo "$GITHUB_REPOSITORY"
