@@ -84,7 +84,7 @@ class ConfigProvider:
         
         try:
             # loads from yaml
-            with open(self._root_dir / self._file_path, "r") as f:
+            with open(self._root_dir / self._file_path, "r", encoding="utf-8") as f:
                 object.__setattr__(self, "_file_content", f.read())
             config_data = yaml.load(self._file_content)
             config = self._schema.model_validate(config_data)
@@ -102,7 +102,7 @@ class ConfigProvider:
         from ruamel.yaml import YAML
         yaml = YAML()
         
-        with open(self._root_dir / self._file_path, "w") as f:
+        with open(self._root_dir / self._file_path, "w", encoding="utf-8") as f:
             try:
                 config = self._get_delegate()
                 config_data = config.model_dump(
